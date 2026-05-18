@@ -3,53 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meu Plano Financeiro — App</title>
+<title>Meu Plano Financeiro</title>
 <link rel="stylesheet" href="../css/app.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Auth loading screen */
+.auth-loading {
+  position: fixed; inset: 0;
+  background: var(--green);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 999;
+  transition: opacity 0.3s;
+}
+.auth-loading .logo { font-family: 'Playfair Display', serif; font-size: 28px; color: #fff; margin-bottom: 16px; }
+.auth-loading .spinner { width: 28px; height: 28px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #52B788; border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* User avatar in topbar */
+.user-info { display: flex; align-items: center; gap: 10px; }
+.user-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--green-glow); color: var(--green);
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--green-light);
+  overflow: hidden;
+}
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.btn-logout {
+  font-size: 12px; color: rgba(255,255,255,0.5);
+  background: none; border: none; cursor: pointer;
+  font-family: var(--sans); padding: 6px 10px;
+  border-radius: 8px; transition: all 0.2s;
+}
+.btn-logout:hover { color: #fff; background: rgba(255,255,255,0.08); }
+</style>
 </head>
 <body>
 
-<div class="app-shell">
+<!-- AUTH LOADING SCREEN -->
+<div class="auth-loading" id="auth-loading">
+  <div class="logo">💰 Meu Plano</div>
+  <div class="spinner"></div>
+</div>
+
+<div class="app-shell" id="app-shell" style="display:none">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">💰 Meu <span>Plano</span></div>
     <nav class="sidebar-nav">
-      <button class="nav-item active" data-page="overview" onclick="navigate('overview')">
-        <span class="icon">📊</span> Visão Geral
-      </button>
-      <button class="nav-item" data-page="debts" onclick="navigate('debts')">
-        <span class="icon">🔴</span> Dívidas
-      </button>
-      <button class="nav-item" data-page="goals" onclick="navigate('goals')">
-        <span class="icon">🎯</span> Metas
-      </button>
-      <button class="nav-item" data-page="score" onclick="navigate('score')">
-        <span class="icon">⭐</span> Meu Score
-      </button>
+      <button class="nav-item active" data-page="overview" onclick="navigate('overview')"><span class="icon">📊</span> Visão Geral</button>
+      <button class="nav-item" data-page="debts" onclick="navigate('debts')"><span class="icon">🔴</span> Dívidas</button>
+      <button class="nav-item" data-page="goals" onclick="navigate('goals')"><span class="icon">🎯</span> Metas</button>
+      <button class="nav-item" data-page="score" onclick="navigate('score')"><span class="icon">⭐</span> Meu Score</button>
     </nav>
     <div class="sidebar-footer">
       <a href="../index.html">← Voltar ao site</a>
       <br><br>
-      <a href="#" onclick="resetData()" style="color:rgba(255,100,100,0.5)">🗑 Resetar dados</a>
+      <button class="btn-logout" onclick="handleLogout()">🚪 Sair</button>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN -->
   <main class="main">
-
-    <!-- TOP BAR -->
     <div class="topbar">
       <div class="topbar-title" id="page-title">Visão Geral</div>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <div class="topbar-month">Maio 2026</div>
+      <div class="user-info">
         <div class="score-chip"><div class="chip-dot"></div><span id="topbar-score">Score —</span></div>
+        <div class="user-avatar" id="user-avatar">?</div>
       </div>
     </div>
 
     <!-- PAGE: OVERVIEW -->
     <div class="page active" id="page-overview">
-
       <div class="card">
         <div class="card-title">Minha renda este mês</div>
         <div class="income-row">
@@ -62,33 +90,18 @@
         </div>
         <div class="tip-box">💡 Anote toda renda que entra — quanto mais preciso, melhor o seu plano.</div>
       </div>
-
       <div class="card">
         <div class="card-title">Resumo do mês</div>
         <div class="ov-grid">
-          <div class="ov-tile income">
-            <div class="ov-label">Entrou</div>
-            <div class="ov-value" id="ov-income">—</div>
-            <div class="ov-sub">esse mês</div>
-          </div>
-          <div class="ov-tile expense">
-            <div class="ov-label">Saiu</div>
-            <div class="ov-value" id="ov-expense">—</div>
-            <div class="ov-sub">esse mês</div>
-          </div>
-          <div class="ov-tile balance">
-            <div class="ov-label">Sobrou</div>
-            <div class="ov-value" id="ov-balance">—</div>
-            <div class="ov-sub" id="ov-balance-label">para dívidas</div>
-          </div>
+          <div class="ov-tile income"><div class="ov-label">Entrou</div><div class="ov-value" id="ov-income">—</div><div class="ov-sub">esse mês</div></div>
+          <div class="ov-tile expense"><div class="ov-label">Saiu</div><div class="ov-value" id="ov-expense">—</div><div class="ov-sub">esse mês</div></div>
+          <div class="ov-tile balance"><div class="ov-label">Sobrou</div><div class="ov-value" id="ov-balance">—</div><div class="ov-sub" id="ov-balance-label">para dívidas</div></div>
         </div>
       </div>
-
       <div class="card">
         <div class="card-title">Para onde foi meu dinheiro</div>
         <div id="expense-bars"></div>
       </div>
-
     </div>
 
     <!-- PAGE: DEBTS -->
@@ -97,7 +110,7 @@
         <div class="card-header">
           <div class="card-title" style="margin-bottom:0">Mapa de dívidas — pague nessa ordem</div>
         </div>
-        <div class="tip-box" style="margin-bottom:16px">💡 As dívidas aparecem ordenadas do maior para o menor juros. Pague o mínimo nas outras e coloque o máximo na <strong>Prioridade 1</strong>.</div>
+        <div class="tip-box" style="margin-bottom:16px">💡 Ordenadas do maior para menor juros. Pague o mínimo nas outras e coloque o máximo na <strong>Prioridade 1</strong>.</div>
         <div id="debt-list"></div>
         <button class="add-btn" onclick="addDebt()">+ Adicionar nova dívida</button>
       </div>
@@ -109,7 +122,7 @@
         <div class="card-header">
           <div class="card-title" style="margin-bottom:0">Minhas metas</div>
         </div>
-        <div class="tip-box" style="margin-bottom:16px">🎯 Comece pela reserva de emergência. Ela protege você de entrar em dívida de novo quando surgir um imprevisto.</div>
+        <div class="tip-box" style="margin-bottom:16px">🎯 Comece pela reserva de emergência — ela protege você de entrar em dívida de novo.</div>
         <div id="goal-list"></div>
         <button class="add-btn" onclick="addGoal()">+ Adicionar nova meta</button>
       </div>
@@ -117,39 +130,30 @@
 
     <!-- PAGE: SCORE -->
     <div class="page" id="page-score">
-
       <div class="score-hero">
-        <div style="font-size:13px; color:rgba(255,255,255,0.5); margin-bottom:4px">Meu score Serasa hoje</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:4px">Meu score Serasa hoje</div>
         <div class="score-number" id="score-number">—</div>
         <div class="score-sublabel" id="score-status"></div>
         <div class="score-bar-wrap">
-          <div class="score-bar-track">
-            <div class="score-bar-fill" id="score-bar-fill" style="width:0%"></div>
-          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" id="score-bar-fill" style="width:0%"></div></div>
         </div>
-        <div class="score-range">
-          <span>0 · Ruim</span><span>300 · Regular</span><span>700 · Bom</span><span>1000 · Excelente</span>
-        </div>
-        <div style="margin-top:16px; display:flex; align-items:center; gap:10px; justify-content:center;">
-          <span style="font-size:12px; color:rgba(255,255,255,0.5)">Atualizar meu score:</span>
+        <div class="score-range"><span>0 · Ruim</span><span>300 · Regular</span><span>700 · Bom</span><span>1000 · Excelente</span></div>
+        <div style="margin-top:16px;display:flex;align-items:center;gap:10px;justify-content:center;">
+          <span style="font-size:12px;color:rgba(255,255,255,0.5)">Atualizar:</span>
           <input type="number" id="score-input" placeholder="ex: 620" min="0" max="1000"
-            style="width:90px; padding:6px 10px; border-radius:8px; border:none; font-family:var(--mono); font-size:14px; text-align:center;"
+            style="width:90px;padding:6px 10px;border-radius:8px;border:none;font-family:var(--mono);font-size:14px;text-align:center;"
             onchange="updateScore(this.value)">
         </div>
       </div>
-
       <div class="card">
         <div class="card-title">O que está derrubando meu score</div>
         <div class="action-list" id="score-negative"></div>
       </div>
-
       <div class="card">
         <div class="card-title">O que vai subir meu score — faça agora</div>
         <div class="action-list" id="score-positive"></div>
       </div>
-
     </div>
-
   </main>
 </div>
 
@@ -163,6 +167,6 @@
   </div>
 </div>
 
-<script src="../js/app.js"></script>
+<script type="module" src="../js/app.js"></script>
 </body>
 </html>

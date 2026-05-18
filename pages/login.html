@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar — Meu Plano Financeiro</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #1B4332;
+  --green-mid: #2D6A4F;
+  --green-light: #52B788;
+  --green-glow: #D8F3DC;
+  --cream: #F5F0E8;
+  --cream-dark: #EDE6D6;
+  --accent: #FF6B35;
+  --text: #1A1A1A;
+  --text-2: #6B7280;
+  --white: #FFFFFF;
+  --error: #FF4D6D;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'Plus Jakarta Sans', sans-serif;
+  --radius: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  background: var(--green);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background decoration */
+body::before {
+  content: '💰';
+  position: fixed;
+  font-size: 400px;
+  opacity: 0.04;
+  top: -80px; left: -60px;
+  pointer-events: none;
+  line-height: 1;
+}
+body::after {
+  content: '';
+  position: fixed;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(82,183,136,0.15) 0%, transparent 70%);
+  bottom: -100px; right: -100px;
+  pointer-events: none;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 36px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.3);
+  animation: slideUp 0.4s ease;
+  position: relative;
+  z-index: 1;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.logo { font-family: var(--serif); font-size: 22px; color: var(--green); font-weight: 700; margin-bottom: 6px; }
+.tagline { font-size: 13px; color: var(--text-2); margin-bottom: 28px; }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; background: var(--cream); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+.tab-btn { flex: 1; padding: 8px; border: none; background: transparent; border-radius: 8px; font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--text-2); cursor: pointer; transition: all 0.2s; }
+.tab-btn.active { background: var(--white); color: var(--green); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+/* FORM */
+.form { display: flex; flex-direction: column; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 12px; font-weight: 600; color: var(--text); }
+.field input {
+  padding: 12px 14px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+  background: #FAFAFA;
+}
+.field input:focus { border-color: var(--green-light); background: var(--white); }
+.field input.error-input { border-color: var(--error); }
+
+.error-msg {
+  background: #FFF0F3;
+  color: var(--error);
+  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,77,109,0.2);
+  display: none;
+}
+.error-msg.show { display: block; }
+
+.btn-submit {
+  background: var(--green);
+  color: var(--white);
+  border: none;
+  padding: 14px;
+  border-radius: 50px;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-submit:hover { background: var(--green-mid); transform: translateY(-1px); }
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 12px; color: var(--text-2); margin: 4px 0;
+}
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #E5E7EB; }
+
+.btn-google {
+  background: var(--white);
+  color: var(--text);
+  border: 1.5px solid #E5E7EB;
+  padding: 13px;
+  border-radius: 50px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+.btn-google:hover { border-color: var(--green-light); background: var(--green-glow); }
+
+.google-icon {
+  width: 18px; height: 18px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23FFC107' d='M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.7 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z'/%3E%3Cpath fill='%23FF3D00' d='m6.3 14.7 6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.7 29.3 4 24 4c-7.7 0-14.3 4.4-17.7 10.7z'/%3E%3Cpath fill='%234CAF50' d='M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.4 26.7 36 24 36c-5.2 0-9.7-3.3-11.3-8H6.1C9.5 39.4 16.2 44 24 44z'/%3E%3Cpath fill='%231976D2' d='M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4 5.6l6.2 5.2C37 38.4 44 33 44 24c0-1.3-.1-2.6-.4-3.9z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+.footer-text { font-size: 11px; color: var(--text-2); text-align: center; margin-top: 16px; line-height: 1.5; }
+.footer-text a { color: var(--green); text-decoration: none; font-weight: 500; }
+
+/* Loading spinner */
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.panel { display: none; }
+.panel.active { display: flex; flex-direction: column; gap: 12px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">💰 Meu Plano</div>
+  <div class="tagline">Organize suas finanças. Saia das dívidas de vez.</div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('login')">Entrar</button>
+    <button class="tab-btn" onclick="switchTab('signup')">Criar conta</button>
+  </div>
+
+  <div class="error-msg" id="error-msg"></div>
+
+  <!-- LOGIN PANEL -->
+  <div class="panel active" id="panel-login">
+    <div class="form">
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com">
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="login-password" placeholder="••••••••">
+      </div>
+      <button class="btn-submit" id="btn-login" onclick="handleLogin()">
+        <span>Entrar</span>
+        <div class="spinner" id="spinner-login"></div>
+      </button>
+    </div>
+    <div class="divider">ou</div>
+    <button class="btn-google" onclick="handleGoogle()">
+      <div class="google-icon"></div>
+      Entrar com Google
+    </button>
+  </div>
+
+  <!-- SIGNUP PANEL -->
+  <div class="panel" id="panel-signup">
+    <div class="form">
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="signup-email" placeholder="seu@email.com">
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="signup-password" placeholder="Mínimo 6 caracteres">
+      </div>
+      <div class="field">
+        <label>Confirmar senha</label>
+        <input type="password" id="signup-confirm" placeholder="Repita a senha">
+      </div>
+      <button class="btn-submit" id="btn-signup" onclick="handleSignup()">
+        <span>Criar conta grátis</span>
+        <div class="spinner" id="spinner-signup"></div>
+      </button>
+    </div>
+    <div class="divider">ou</div>
+    <button class="btn-google" onclick="handleGoogle()">
+      <div class="google-icon"></div>
+      Continuar com Google
+    </button>
+  </div>
+
+  <div class="footer-text">
+    Ao entrar, você concorda com nossos <a href="#">Termos de uso</a> e <a href="#">Política de privacidade</a>
+  </div>
+</div>
+
+<script type="module">
+  import { loginWithGoogle, loginWithEmail, signupWithEmail, watchAuthState } from '../js/firebase.js';
+
+  // Redirect if already logged in
+  watchAuthState(
+    (user) => { window.location.href = 'app.html'; },
+    () => {}
+  );
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+  function hideError() {
+    document.getElementById('error-msg').classList.remove('show');
+  }
+  function setLoading(btnId, spinnerId, loading) {
+    const btn = document.getElementById(btnId);
+    const spinner = document.getElementById(spinnerId);
+    btn.disabled = loading;
+    spinner.style.display = loading ? 'block' : 'none';
+  }
+
+  window.switchTab = function(tab) {
+    hideError();
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (i === 0) === (tab === 'login')));
+    document.getElementById('panel-login').classList.toggle('active', tab === 'login');
+    document.getElementById('panel-signup').classList.toggle('active', tab === 'signup');
+  };
+
+  window.handleGoogle = async function() {
+    hideError();
+    const { user, error } = await loginWithGoogle();
+    if (error) showError(error);
+    else window.location.href = 'app.html';
+  };
+
+  window.handleLogin = async function() {
+    hideError();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    if (!email || !password) return showError('Preencha e-mail e senha.');
+    setLoading('btn-login', 'spinner-login', true);
+    const { user, error } = await loginWithEmail(email, password);
+    setLoading('btn-login', 'spinner-login', false);
+    if (error) showError(error);
+    else window.location.href = 'app.html';
+  };
+
+  window.handleSignup = async function() {
+    hideError();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const confirm = document.getElementById('signup-confirm').value;
+    if (!email || !password) return showError('Preencha todos os campos.');
+    if (password !== confirm) return showError('As senhas não coincidem.');
+    if (password.length < 6) return showError('Senha precisa ter pelo menos 6 caracteres.');
+    setLoading('btn-signup', 'spinner-signup', true);
+    const { user, error } = await signupWithEmail(email, password);
+    setLoading('btn-signup', 'spinner-signup', false);
+    if (error) showError(error);
+    else window.location.href = 'app.html';
+  };
+
+  // Enter key support
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const activePanel = document.querySelector('.panel.active').id;
+      if (activePanel === 'panel-login') window.handleLogin();
+      else window.handleSignup();
+    }
+  });
+</script>
+</body>
+</html>
