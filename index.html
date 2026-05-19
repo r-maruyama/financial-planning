@@ -3,115 +3,788 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meu Plano Financeiro — Saia das Dívidas de Vez</title>
-<link rel="stylesheet" href="css/style.css">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Iara — Controle o fluxo do seu dinheiro</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --deep: #050E1A;
+  --abyss: #071525;
+  --ocean: #0A2540;
+  --teal: #0B6E68;
+  --teal-light: #12A599;
+  --aqua: #2ECDC4;
+  --aqua-glow: rgba(46,205,196,0.15);
+  --foam: #C8F0EE;
+  --sand: #F2E8D9;
+  --gold: #C9A84C;
+  --gold-light: #F0CC7A;
+  --text: #E8F4F3;
+  --text-2: rgba(200,240,238,0.55);
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+  --r: 20px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--deep);
+  color: var(--text);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CUSTOM CURSOR */
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--aqua);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease, opacity 0.3s;
+  mix-blend-mode: screen;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(46,205,196,0.4);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transition: transform 0.35s ease, width 0.3s, height 0.3s, border-color 0.3s;
+}
+
+/* WATER CANVAS */
+#water-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 20px 6%;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(5,14,26,0.95) 0%, transparent 100%);
+}
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+.nav-logo span { color: var(--aqua); font-style: italic; }
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a { font-size: 13px; color: var(--text-2); text-decoration: none; letter-spacing: 0.04em; transition: color 0.2s; }
+.nav-links a:hover { color: var(--aqua); }
+.nav-cta {
+  background: transparent;
+  border: 1px solid var(--aqua);
+  color: var(--aqua);
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.25s;
+  letter-spacing: 0.04em;
+}
+.nav-cta:hover { background: var(--aqua); color: var(--deep); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 6% 80px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--aqua);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.2s forwards;
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(64px, 10vw, 130px);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.4s forwards;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--aqua);
+  display: block;
+}
+.hero-sub {
+  font-family: var(--serif);
+  font-size: clamp(18px, 2.5vw, 26px);
+  font-weight: 300;
+  color: var(--text-2);
+  font-style: italic;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.55s forwards;
+}
+.hero p {
+  font-size: 16px;
+  color: var(--text-2);
+  max-width: 540px;
+  line-height: 1.75;
+  margin: 0 auto 48px;
+  font-weight: 300;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.7s forwards;
+}
+
+.hero-actions {
+  display: flex; gap: 16px; align-items: center; justify-content: center;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.85s forwards;
+}
+.btn-primary {
+  background: var(--aqua);
+  color: var(--deep);
+  padding: 16px 36px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: all 0.25s;
+  box-shadow: 0 0 40px rgba(46,205,196,0.3);
+}
+.btn-primary:hover { background: var(--foam); box-shadow: 0 0 60px rgba(46,205,196,0.5); transform: translateY(-2px); }
+.btn-ghost {
+  color: var(--text-2);
+  font-size: 14px;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  display: flex; align-items: center; gap: 8px;
+  transition: color 0.2s;
+}
+.btn-ghost:hover { color: var(--text); }
+
+/* SCROLL INDICATOR */
+.scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 1.2s forwards;
+}
+.scroll-line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--aqua));
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+.scroll-text { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-2); }
+@keyframes scrollPulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+/* MYTH SECTION */
+.myth {
+  position: relative; z-index: 1;
+  padding: 100px 6%;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.myth-quote {
+  font-family: var(--serif);
+  font-size: clamp(22px, 3.5vw, 36px);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+.myth-quote em { color: var(--aqua); font-style: normal; }
+.myth-attr { font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-2); }
+
+/* DIVIDER */
+.divider {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 20px;
+  padding: 0 6%; margin: 0 auto;
+  max-width: 1100px;
+}
+.divider-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, rgba(46,205,196,0.2), transparent); }
+.divider-dot { width: 4px; height: 4px; background: var(--aqua); border-radius: 50%; opacity: 0.6; }
+
+/* FEATURES */
+.features {
+  position: relative; z-index: 1;
+  padding: 80px 6%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.features-label {
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--aqua); margin-bottom: 16px; text-align: center;
+}
+.features-title {
+  font-family: var(--serif);
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 64px;
+  line-height: 1.2;
+}
+.features-title em { font-style: italic; color: var(--aqua); }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+}
+.feat {
+  padding: 40px;
+  background: rgba(11,110,104,0.06);
+  border: 1px solid rgba(46,205,196,0.08);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.feat::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--aqua), transparent);
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+.feat:hover { background: rgba(11,110,104,0.12); }
+.feat:hover::before { transform: scaleX(1); }
+.feat-num {
+  font-family: var(--serif);
+  font-size: 48px;
+  font-weight: 300;
+  color: rgba(46,205,196,0.15);
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.feat-title { font-size: 17px; font-weight: 500; margin-bottom: 10px; color: var(--text); }
+.feat-desc { font-size: 14px; color: var(--text-2); line-height: 1.7; font-weight: 300; }
+.feat-tag {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--aqua);
+  opacity: 0.7;
+}
+
+/* PROBLEM */
+.problem {
+  position: relative; z-index: 1;
+  padding: 100px 6%;
+  background: linear-gradient(to bottom, transparent, rgba(11,110,104,0.06), transparent);
+}
+.problem-inner { max-width: 1100px; margin: 0 auto; }
+.problem-title {
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 300;
+  margin-bottom: 48px;
+  max-width: 500px;
+  line-height: 1.2;
+}
+.problem-title em { font-style: italic; color: var(--aqua); }
+.problem-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+.prob-card {
+  padding: 28px;
+  border: 1px solid rgba(46,205,196,0.1);
+  border-radius: var(--r);
+  background: rgba(5,14,26,0.6);
+  transition: border-color 0.3s;
+}
+.prob-card:hover { border-color: rgba(46,205,196,0.25); }
+.prob-icon { font-size: 28px; margin-bottom: 14px; }
+.prob-card h3 { font-size: 15px; font-weight: 500; margin-bottom: 8px; color: var(--text); }
+.prob-card p { font-size: 13px; color: var(--text-2); line-height: 1.65; font-weight: 300; }
+
+/* ABOUT */
+.about {
+  position: relative; z-index: 1;
+  padding: 100px 6%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.about-visual {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.about-circle {
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, var(--teal) 0%, var(--ocean) 60%, var(--deep) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 80px;
+  box-shadow: 0 0 80px rgba(46,205,196,0.2), inset 0 0 60px rgba(0,0,0,0.3);
+  animation: breathe 4s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%,100%{box-shadow:0 0 80px rgba(46,205,196,0.2),inset 0 0 60px rgba(0,0,0,0.3)}
+  50%{box-shadow:0 0 120px rgba(46,205,196,0.35),inset 0 0 60px rgba(0,0,0,0.3)}
+}
+.about-ring {
+  position: absolute;
+  width: 320px; height: 320px;
+  border-radius: 50%;
+  border: 1px solid rgba(46,205,196,0.15);
+  animation: spin 20s linear infinite;
+}
+.about-ring-2 {
+  position: absolute;
+  width: 370px; height: 370px;
+  border-radius: 50%;
+  border: 1px dashed rgba(46,205,196,0.08);
+  animation: spin 30s linear infinite reverse;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.about-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--aqua); margin-bottom: 16px; }
+.about h2 { font-family: var(--serif); font-size: clamp(26px,3.5vw,40px); font-weight: 300; margin-bottom: 20px; line-height: 1.2; }
+.about h2 em { font-style: italic; color: var(--aqua); }
+.about p { font-size: 14px; color: var(--text-2); line-height: 1.8; font-weight: 300; margin-bottom: 16px; }
+.creds { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.cred {
+  font-size: 11px; letter-spacing: 0.06em;
+  border: 1px solid rgba(46,205,196,0.2);
+  color: var(--aqua);
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+/* PRICING */
+.pricing {
+  position: relative; z-index: 1;
+  padding: 100px 6%;
+  text-align: center;
+}
+.pricing-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--aqua); margin-bottom: 16px; }
+.pricing h2 { font-family: var(--serif); font-size: clamp(28px,4vw,44px); font-weight: 300; margin-bottom: 12px; }
+.pricing-sub { font-size: 15px; color: var(--text-2); font-weight: 300; margin-bottom: 56px; }
+
+.price-card {
+  max-width: 480px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, rgba(11,110,104,0.25) 0%, rgba(7,21,37,0.8) 100%);
+  border: 1px solid rgba(46,205,196,0.2);
+  border-radius: 28px;
+  padding: 48px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.price-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--aqua), transparent);
+}
+.price-glow {
+  position: absolute;
+  top: -80px; left: 50%; transform: translateX(-50%);
+  width: 300px; height: 200px;
+  background: radial-gradient(ellipse, rgba(46,205,196,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.price-badge { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--aqua); margin-bottom: 12px; }
+.price-name { font-family: var(--serif); font-size: 28px; font-weight: 300; margin-bottom: 24px; }
+.price-amount { display: flex; align-items: baseline; justify-content: center; gap: 4px; margin-bottom: 8px; }
+.price-cur { font-size: 20px; color: var(--text-2); }
+.price-num { font-family: var(--serif); font-size: 80px; font-weight: 300; line-height: 1; color: var(--text); }
+.price-free { font-family: var(--serif); font-size: 56px; font-weight: 300; color: var(--aqua); }
+.price-orig { font-size: 13px; color: var(--text-2); text-decoration: line-through; margin-bottom: 6px; }
+.price-save { display: inline-block; background: rgba(46,205,196,0.15); color: var(--aqua); font-size: 11px; letter-spacing: 0.08em; padding: 4px 14px; border-radius: 20px; margin-bottom: 28px; border: 1px solid rgba(46,205,196,0.2); }
+.price-list { list-style: none; text-align: left; margin-bottom: 32px; display: flex; flex-direction: column; gap: 10px; }
+.price-list li { display: flex; gap: 12px; font-size: 14px; color: var(--text-2); font-weight: 300; align-items: flex-start; }
+.price-list li::before { content: '~'; color: var(--aqua); flex-shrink: 0; font-family: var(--serif); font-size: 18px; line-height: 1.2; }
+.price-btn {
+  display: block;
+  background: var(--aqua);
+  color: var(--deep);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 18px;
+  border-radius: 50px;
+  letter-spacing: 0.04em;
+  transition: all 0.25s;
+  box-shadow: 0 0 40px rgba(46,205,196,0.25);
+}
+.price-btn:hover { background: var(--foam); box-shadow: 0 0 60px rgba(46,205,196,0.4); }
+.price-guarantee { font-size: 12px; color: var(--text-2); margin-top: 14px; font-weight: 300; }
+
+/* FAQ */
+.faq {
+  position: relative; z-index: 1;
+  padding: 80px 6%;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.faq h2 { font-family: var(--serif); font-size: clamp(26px,3.5vw,38px); font-weight: 300; text-align: center; margin-bottom: 48px; }
+.faq-item { border-bottom: 1px solid rgba(46,205,196,0.1); padding: 20px 0; }
+.faq-q { font-size: 15px; font-weight: 400; color: var(--text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; user-select: none; transition: color 0.2s; }
+.faq-q:hover { color: var(--aqua); }
+.faq-icon { color: var(--aqua); font-size: 20px; transition: transform 0.25s; flex-shrink: 0; font-family: var(--serif); }
+.faq-a { font-size: 14px; color: var(--text-2); line-height: 1.75; margin-top: 12px; font-weight: 300; display: none; }
+.faq-item.open .faq-a { display: block; }
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+
+/* FINAL CTA */
+.final {
+  position: relative; z-index: 1;
+  padding: 120px 6%;
+  text-align: center;
+  overflow: hidden;
+}
+.final::before {
+  content: 'IARA';
+  position: absolute;
+  font-family: var(--serif);
+  font-size: 300px;
+  font-weight: 300;
+  color: rgba(46,205,196,0.03);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+.final h2 { font-family: var(--serif); font-size: clamp(30px,5vw,56px); font-weight: 300; line-height: 1.2; max-width: 600px; margin: 0 auto 20px; }
+.final h2 em { font-style: italic; color: var(--aqua); }
+.final p { font-size: 15px; color: var(--text-2); font-weight: 300; margin-bottom: 40px; }
+
+/* FOOTER */
+footer {
+  position: relative; z-index: 1;
+  padding: 32px 6%;
+  border-top: 1px solid rgba(46,205,196,0.08);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--text-2);
+  flex-wrap: wrap; gap: 12px;
+}
+footer a { color: var(--text-2); text-decoration: none; transition: color 0.2s; }
+footer a:hover { color: var(--aqua); }
+.footer-logo { font-family: var(--serif); font-size: 18px; color: var(--text); font-weight: 300; letter-spacing: 0.08em; }
+.footer-logo span { color: var(--aqua); font-style: italic; }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .features-grid { grid-template-columns: 1fr; }
+  .problem-grid { grid-template-columns: 1fr; }
+  .about { grid-template-columns: 1fr; gap: 48px; }
+  .about-visual { order: -1; }
+  .nav-links { display: none; }
+  body { cursor: auto; }
+  .cursor, .cursor-ring { display: none; }
+}
+</style>
 </head>
 <body>
 
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<canvas id="water-canvas"></canvas>
+
+<!-- NAV -->
 <nav>
-  <div class="nav-logo">💰 Meu Plano</div>
-  <a href="pages/login.html" class="nav-cta">Começar grátis →</a>
+  <a href="#" class="nav-logo">I<span>ara</span></a>
+  <div class="nav-links">
+    <a href="#funcionalidades">Funcionalidades</a>
+    <a href="#sobre">Sobre</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a href="pages/login.html" class="nav-cta">Começar agora</a>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
-  <div class="hero-content">
-    <div class="hero-badge">
-      <div class="badge-dot"></div>
-      Feito por quem trabalha com crédito e cobrança
-    </div>
-    <h1>Pare de se perder no dinheiro. <em>Organize de uma vez.</em></h1>
-    <p>Um planner financeiro gratuito — feito para quem ganha até R$4.000 e quer sair das dívidas, entender o score e começar a guardar dinheiro de verdade.</p>
-    <div class="hero-actions">
-      <a href="pages/login.html" class="btn-primary">Usar o planner grátis →</a>
-      <a href="#dentro" class="btn-secondary">Ver o que tem dentro ↓</a>
-    </div>
+  <div class="hero-eyebrow">Planejamento financeiro · Para quem realmente precisa</div>
+  <h1>I<em>ara</em></h1>
+  <div class="hero-sub">Controle o fluxo do seu dinheiro</div>
+  <p>Como as águas do rio, o dinheiro sempre encontra um caminho. Iara te ajuda a guiar esse fluxo — sair das dívidas, entender seu score e começar a construir algo sólido.</p>
+  <div class="hero-actions">
+    <a href="pages/login.html" class="btn-primary">Começar gratuitamente</a>
+    <a href="#funcionalidades" class="btn-ghost">Ver como funciona ↓</a>
   </div>
-  <div class="hero-visual">
-    <div class="floating-tag tag-1">✅ Score subindo</div>
-    <div class="mock-card">
-      <div class="mock-card-header">
-        <div>
-          <div class="mock-label">Visão geral · Maio 2026</div>
-          <div class="mock-amount">R$460</div>
-          <div class="mock-sub">sobrando pra quitar dívidas</div>
-        </div>
-        <div class="mock-score">Score 542 →</div>
-      </div>
-      <div class="mock-bars">
-        <div class="mock-bar-row"><div class="mock-bar-label">Essencial</div><div class="mock-bar-track"><div class="mock-bar-fill fill-green"></div></div><div class="mock-bar-pct green">50%</div></div>
-        <div class="mock-bar-row"><div class="mock-bar-label">Lazer</div><div class="mock-bar-track"><div class="mock-bar-fill fill-orange"></div></div><div class="mock-bar-pct orange">15%</div></div>
-        <div class="mock-bar-row"><div class="mock-bar-label">Dívidas</div><div class="mock-bar-track"><div class="mock-bar-fill fill-blue"></div></div><div class="mock-bar-pct blue">19%</div></div>
-      </div>
-      <div class="mock-pill-row">
-        <div class="mock-pill"><div class="mock-pill-val green">R$2.800</div><div class="mock-pill-key">Entrou</div></div>
-        <div class="mock-pill"><div class="mock-pill-val red">R$2.340</div><div class="mock-pill-key">Saiu</div></div>
-        <div class="mock-pill"><div class="mock-pill-val green">3 metas</div><div class="mock-pill-key">Ativas</div></div>
-      </div>
-    </div>
-    <div class="floating-tag tag-2">🔴 Cartão: prioridade 1</div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <div class="scroll-text">Role</div>
   </div>
 </section>
 
+<!-- MYTH -->
+<section class="myth reveal">
+  <div class="myth-quote">
+    "Iara era a senhora das águas — quem seguia seu chamado encontrava <em>clareza</em> onde antes havia confusão."
+  </div>
+  <div class="myth-attr">Mitologia Tupi-Guarani</div>
+</section>
+
+<div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+<!-- FEATURES -->
+<section class="features" id="funcionalidades">
+  <div class="features-label reveal">O que você vai encontrar</div>
+  <h2 class="features-title reveal">Quatro módulos.<br><em>Uma transformação.</em></h2>
+  <div class="features-grid">
+    <div class="feat reveal">
+      <div class="feat-num">01</div>
+      <div class="feat-title">Visão Geral</div>
+      <div class="feat-desc">Veja para onde cada real vai — entradas, saídas, e o que sobra. Visual, simples, sem jargão de contador. Como enxergar o fundo do rio pela primeira vez.</div>
+      <div class="feat-tag">Clareza imediata</div>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-num">02</div>
+      <div class="feat-title">Mapa de Dívidas</div>
+      <div class="feat-desc">Suas dívidas organizadas pela taxa de juros, com a ordem certa de pagamento. Inclui dicas reais de negociação escritas por quem trabalhou dentro do sistema de crédito.</div>
+      <div class="feat-tag">Conhecimento insider</div>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-num">03</div>
+      <div class="feat-title">Metas de Vida</div>
+      <div class="feat-desc">Do fundo de emergência ao sonho grande — defina, visualize e acompanhe cada meta. Porque organizar o dinheiro não é sobre privação, é sobre chegar onde você quer.</div>
+      <div class="feat-tag">Do hoje ao amanhã</div>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-num">04</div>
+      <div class="feat-title">Tracker de Score</div>
+      <div class="feat-desc">Entenda o que está derrubando sua pontuação e o que vai subir. Ações concretas, sem mitos, sem promessas falsas. O score é uma língua — Iara te ensina a falar ela.</div>
+      <div class="feat-tag">Sem mistérios</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
 <section class="problem">
   <div class="problem-inner">
-    <div class="section-label">O problema</div>
-    <h2>Por que é tão difícil organizar o dinheiro quando ele é pouco?</h2>
+    <h2 class="problem-title reveal">Por que organizar dinheiro parece tão <em>difícil?</em></h2>
     <div class="problem-grid">
-      <div class="problem-card reveal"><div class="problem-icon">😵</div><h3>Planilhas complicadas demais</h3><p>A maioria foi feita pra contador. É complexo, assustador, e você desiste na primeira semana.</p></div>
-      <div class="problem-card reveal"><div class="problem-icon">💳</div><h3>Ninguém explica a lógica das dívidas</h3><p>Qual pagar primeiro? O sistema não te conta — e você acaba pagando muito mais.</p></div>
-      <div class="problem-card reveal"><div class="problem-icon">📉</div><h3>Score misterioso que nunca sobe</h3><p>Todo mundo fala em score, mas ninguém explica o que de verdade move o ponteiro.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="inside" id="dentro">
-  <div class="inside-header reveal">
-    <div class="section-label dark">O que tem dentro</div>
-    <h2>Tudo que você precisa para começar hoje</h2>
-    <p>Quatro módulos prontos para usar. Sem precisar de contador, assessor, ou curso caro.</p>
-  </div>
-  <div class="modules">
-    <div class="module reveal"><div class="module-num">1</div><div class="module-body"><div class="module-title">📊 Visão Geral — onde está meu dinheiro</div><div class="module-desc">Registre sua renda e veja para onde cada real foi. Simples, visual, sem jargão.</div></div><span class="module-tag tag-free">Simples</span></div>
-    <div class="module reveal"><div class="module-num">2</div><div class="module-body"><div class="module-title">🔴 Mapa de Dívidas — pague na ordem certa</div><div class="module-desc">Priorização automática por juros, com dicas reais de dentro do sistema de crédito.</div></div><span class="module-tag tag-insider">Exclusivo</span></div>
-    <div class="module reveal"><div class="module-num">3</div><div class="module-body"><div class="module-title">🎯 Metas — do fundo de emergência ao sonho grande</div><div class="module-desc">Defina metas e acompanhe o progresso visualmente.</div></div><span class="module-tag tag-free">Motivador</span></div>
-    <div class="module reveal"><div class="module-num">4</div><div class="module-body"><div class="module-title">⭐ Tracker de Score — entenda o que move o ponteiro</div><div class="module-desc">Ações concretas que realmente aumentam sua pontuação — sem mitos.</div></div><span class="module-tag tag-insider">Insider</span></div>
-  </div>
-  <div style="text-align:center;margin-top:40px;">
-    <a href="pages/login.html" class="btn-primary">Começar agora — é grátis →</a>
-  </div>
-</section>
-
-<section class="about">
-  <div class="about-inner">
-    <div class="about-avatar reveal">
-      <div style="font-size:64px">👩‍💼</div>
-      <p>Product Manager<br>de Crédito e Cobrança</p>
-    </div>
-    <div class="reveal">
-      <div class="section-label dark">Quem criou</div>
-      <h2>Feito por quem trabalhou dentro do sistema</h2>
-      <p>Sou Product Manager na área de crédito e cobrança. Todos os dias trabalho com os dados e as decisões que empresas tomam quando alguém está em dívida.</p>
-      <p>Vi de perto o que derruba o score, o que credores aceitam negociar, e o que acontece quando as dívidas ficam sem atenção.</p>
-      <div class="credential-row">
-        <div class="credential">📊 PM de Crédito</div>
-        <div class="credential">🏦 Área de Cobrança</div>
-        <div class="credential">📚 Educação Financeira</div>
+      <div class="prob-card reveal">
+        <div class="prob-icon">🌊</div>
+        <h3>O dinheiro some sem avisar</h3>
+        <p>Você trabalha, recebe, e no fim do mês parece que não sobrou nada. Não é culpa sua — é falta de visibilidade. Iara ilumina o fundo do rio.</p>
+      </div>
+      <div class="prob-card reveal">
+        <div class="prob-icon">🔗</div>
+        <h3>Dívidas que parecem correntes</h3>
+        <p>Qual pagar primeiro? Quanto negociar? O sistema não te conta. Iara foi construída por quem viu isso de dentro e sabe exatamente como sair.</p>
+      </div>
+      <div class="prob-card reveal">
+        <div class="prob-icon">🌫️</div>
+        <h3>Score que ninguém explica</h3>
+        <p>Todos falam em score, mas ninguém explica o que de verdade move o ponteiro. Iara desmistifica e te dá um plano concreto para subir.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="final-cta">
-  <h2 class="reveal">Você já sabe que precisa organizar.<br>O que falta é começar.</h2>
-  <p class="reveal">Gratuito. No seu navegador. Sem instalar nada.</p>
-  <a href="pages/login.html" class="btn-primary reveal">Criar minha conta grátis →</a>
+<!-- ABOUT -->
+<section class="about" id="sobre">
+  <div class="about-visual reveal">
+    <div class="about-ring"></div>
+    <div class="about-ring-2"></div>
+    <div class="about-circle">🧜‍♀️</div>
+  </div>
+  <div class="reveal">
+    <div class="about-label">Quem está por trás de Iara</div>
+    <h2>Conhecimento de dentro.<br><em>Linguagem de gente.</em></h2>
+    <p>Sou Product Manager na área de crédito e cobrança. Todos os dias construo os sistemas que decidem o que acontece quando alguém para de pagar uma dívida.</p>
+    <p>Vi de perto o que derruba o score, o que credores realmente aceitam negociar, e como o sistema funciona para quem está do outro lado. Iara é esse conhecimento traduzido para o português simples do dia a dia.</p>
+    <p>Não é um app feito por economistas para quem já tem dinheiro. É uma ferramenta feita por quem conhece o sistema para quem precisa dominar ele.</p>
+    <div class="creds">
+      <span class="cred">PM de Crédito</span>
+      <span class="cred">Área de Cobrança</span>
+      <span class="cred">Educação Financeira</span>
+      <span class="cred">Contexto Brasileiro</span>
+    </div>
+  </div>
 </section>
 
+<!-- PRICING -->
+<section class="pricing" id="preco">
+  <div class="pricing-label reveal">Acesso</div>
+  <h2 class="reveal">Simples como deve ser.</h2>
+  <div class="pricing-sub reveal">Sem mensalidade. Sem cartão. Sem pegadinha.</div>
+  <div class="price-card reveal">
+    <div class="price-glow"></div>
+    <div class="price-badge">Acesso completo</div>
+    <div class="price-name">Iara — Plano Gratuito</div>
+    <div class="price-amount">
+      <div class="price-free">Grátis</div>
+    </div>
+    <div class="price-save">✦ Para sempre — sem limite de tempo</div>
+    <ul class="price-list">
+      <li>Visão geral de renda e despesas</li>
+      <li>Mapa de dívidas com priorização automática</li>
+      <li>Metas financeiras com acompanhamento visual</li>
+      <li>Tracker de score com ações concretas</li>
+      <li>Dados salvos na nuvem — acesse de qualquer dispositivo</li>
+      <li>Login com Google ou e-mail</li>
+    </ul>
+    <a href="pages/login.html" class="price-btn">Criar minha conta em Iara</a>
+    <p class="price-guarantee">Seus dados são seus. Nunca vendemos informações.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <h2 class="reveal">Perguntas frequentes</h2>
+  <div class="faq-item reveal">
+    <div class="faq-q" onclick="toggleFaq(this)">Por que o nome Iara? <span class="faq-icon">+</span></div>
+    <div class="faq-a">Iara é a senhora das águas na mitologia Tupi-Guarani — uma figura poderosa que habita os rios e guia quem está perdido. O dinheiro, como a água, sempre encontra um caminho. Iara te ajuda a controlar esse fluxo.</div>
+  </div>
+  <div class="faq-item reveal">
+    <div class="faq-q" onclick="toggleFaq(this)">É realmente gratuito? <span class="faq-icon">+</span></div>
+    <div class="faq-a">Sim, completamente. Iara é gratuita porque acreditamos que educação financeira não deve ser privilégio de quem já tem dinheiro. Você cria uma conta e usa — sem cartão, sem período de teste, sem limite.</div>
+  </div>
+  <div class="faq-item reveal">
+    <div class="faq-q" onclick="toggleFaq(this)">Meus dados financeiros estão seguros? <span class="faq-icon">+</span></div>
+    <div class="faq-a">Seus dados ficam salvos na sua conta — só você tem acesso. Usamos Firebase (Google) para autenticação e armazenamento, com regras de segurança que garantem que nenhum outro usuário possa ver suas informações. Nunca vendemos dados.</div>
+  </div>
+  <div class="faq-item reveal">
+    <div class="faq-q" onclick="toggleFaq(this)">Iara se conecta ao meu banco automaticamente? <span class="faq-icon">+</span></div>
+    <div class="faq-a">Ainda não — você insere os dados manualmente. Estamos trabalhando na integração com Open Finance para que, em breve, seus dados venham direto do banco com seu consentimento.</div>
+  </div>
+  <div class="faq-item reveal">
+    <div class="faq-q" onclick="toggleFaq(this)">Funciona no celular? <span class="faq-icon">+</span></div>
+    <div class="faq-a">Sim. Iara foi construída para funcionar em qualquer dispositivo — celular, tablet ou computador. Seus dados sincronizam automaticamente entre eles.</div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <h2 class="reveal">O dinheiro já está fluindo.<br><em>Aprenda a guiá-lo.</em></h2>
+  <p class="reveal">Crie sua conta agora. Leva menos de 1 minuto.</p>
+  <a href="pages/login.html" class="btn-primary reveal">Entrar em Iara →</a>
+</section>
+
+<!-- FOOTER -->
 <footer>
-  <p>© 2026 Meu Plano Financeiro · Feito com ❤️ no Brasil · <a href="#">Contato</a></p>
+  <div class="footer-logo">I<span>ara</span></div>
+  <div>© 2026 Iara · Feito com ❤️ no Brasil</div>
+  <div style="display:flex;gap:20px;">
+    <a href="#">Privacidade</a>
+    <a href="#">Contato</a>
+  </div>
 </footer>
 
-<script src="js/main.js"></script>
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+});
+function animateRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) *.12;
+  ring.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.width='56px'; ring.style.height='56px'; ring.style.borderColor='rgba(46,205,196,0.6)'; });
+  el.addEventListener('mouseleave', () => { ring.style.width='36px'; ring.style.height='36px'; ring.style.borderColor='rgba(46,205,196,0.4)'; });
+});
+
+// Water canvas
+const canvas = document.getElementById('water-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, t = 0;
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+function drawWater() {
+  ctx.clearRect(0, 0, W, H);
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, 'rgba(11,110,104,0)');
+  grad.addColorStop(0.5, 'rgba(11,110,104,0.08)');
+  grad.addColorStop(1, 'rgba(11,110,104,0)');
+  for (let i = 0; i < 5; i++) {
+    ctx.beginPath();
+    ctx.strokeStyle = `rgba(46,205,196,${0.03 + i * 0.01})`;
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= W; x += 4) {
+      const y = H/2 + Math.sin((x/W * Math.PI * 3) + t + i * 0.8) * (30 + i * 15)
+               + Math.sin((x/W * Math.PI * 5) + t * 0.7 + i) * (15 + i * 8);
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+  t += 0.008;
+  requestAnimationFrame(drawWater);
+}
+drawWater();
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => { if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// FAQ
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const open = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!open) item.classList.add('open');
+}
+</script>
 </body>
 </html>
