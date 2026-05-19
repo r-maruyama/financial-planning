@@ -3,318 +3,397 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Entrar — Meu Plano Financeiro</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Iara — Entrar</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --green: #1B4332;
-  --green-mid: #2D6A4F;
-  --green-light: #52B788;
-  --green-glow: #D8F3DC;
-  --cream: #F5F0E8;
-  --cream-dark: #EDE6D6;
-  --accent: #FF6B35;
-  --text: #1A1A1A;
-  --text-2: #6B7280;
-  --white: #FFFFFF;
-  --error: #FF4D6D;
-  --serif: 'Playfair Display', Georgia, serif;
-  --sans: 'Plus Jakarta Sans', sans-serif;
-  --radius: 16px;
+  --deep: #050E1A;
+  --ocean: #0A2540;
+  --teal: #0B6E68;
+  --teal-light: #12A599;
+  --aqua: #2ECDC4;
+  --aqua-glow: rgba(46,205,196,0.15);
+  --foam: #C8F0EE;
+  --text: #E8F4F3;
+  --text-2: rgba(200,240,238,0.55);
+  --error: #FF6B6B;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: var(--sans);
-  background: var(--green);
+  background: var(--deep);
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  position: relative;
+  align-items: stretch;
   overflow: hidden;
 }
 
-/* Background decoration */
-body::before {
-  content: '💰';
-  position: fixed;
-  font-size: 400px;
-  opacity: 0.04;
-  top: -80px; left: -60px;
-  pointer-events: none;
-  line-height: 1;
-}
-body::after {
-  content: '';
-  position: fixed;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(82,183,136,0.15) 0%, transparent 70%);
-  bottom: -100px; right: -100px;
+/* WATER CANVAS */
+canvas {
+  position: fixed; inset: 0;
+  z-index: 0; opacity: 0.3;
   pointer-events: none;
 }
 
-.card {
-  background: var(--white);
-  border-radius: 24px;
-  width: 100%;
-  max-width: 420px;
-  padding: 40px 36px;
-  box-shadow: 0 32px 80px rgba(0,0,0,0.3);
-  animation: slideUp 0.4s ease;
+/* LEFT PANEL — branding */
+.left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 8%;
   position: relative;
   z-index: 1;
 }
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+.left-logo {
+  font-family: var(--serif);
+  font-size: 72px;
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+  letter-spacing: 0.04em;
+}
+.left-logo em { font-style: italic; color: var(--aqua); }
+.left-tagline {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text-2);
+  margin-bottom: 48px;
+}
+.left-myth {
+  border-left: 1px solid rgba(46,205,196,0.25);
+  padding-left: 20px;
+  max-width: 380px;
+}
+.left-myth p {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text-2);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+.left-myth span {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(46,205,196,0.5);
 }
 
-.logo { font-family: var(--serif); font-size: 22px; color: var(--green); font-weight: 700; margin-bottom: 6px; }
-.tagline { font-size: 13px; color: var(--text-2); margin-bottom: 28px; }
+/* Floating orb */
+.orb {
+  position: absolute;
+  bottom: -100px; left: -100px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(11,110,104,0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: breathe 5s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+/* RIGHT PANEL — form */
+.right {
+  width: 480px;
+  flex-shrink: 0;
+  background: rgba(7,21,37,0.85);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(46,205,196,0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 52px;
+  position: relative;
+  z-index: 1;
+  animation: slideIn 0.5s ease;
+}
+@keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+
+.form-title {
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.form-subtitle { font-size: 13px; color: var(--text-2); font-weight: 300; margin-bottom: 32px; }
 
 /* TABS */
-.tabs { display: flex; gap: 4px; background: var(--cream); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
-.tab-btn { flex: 1; padding: 8px; border: none; background: transparent; border-radius: 8px; font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--text-2); cursor: pointer; transition: all 0.2s; }
-.tab-btn.active { background: var(--white); color: var(--green); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border-bottom: 1px solid rgba(46,205,196,0.1);
+}
+.tab-btn {
+  padding: 10px 20px 12px;
+  border: none; background: transparent;
+  font-family: var(--sans); font-size: 13px;
+  color: var(--text-2); cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.tab-btn.active { color: var(--aqua); border-bottom-color: var(--aqua); }
+.tab-btn:hover:not(.active) { color: var(--text); }
 
-/* FORM */
-.form { display: flex; flex-direction: column; gap: 12px; }
-.field { display: flex; flex-direction: column; gap: 6px; }
-.field label { font-size: 12px; font-weight: 600; color: var(--text); }
+/* FORM FIELDS */
+.panel { display: none; flex-direction: column; gap: 14px; }
+.panel.active { display: flex; }
+
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); }
 .field input {
-  padding: 12px 14px;
-  border: 1.5px solid #E5E7EB;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(46,205,196,0.15);
   border-radius: 10px;
-  font-family: var(--sans);
-  font-size: 14px;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.2s;
-  background: #FAFAFA;
+  padding: 13px 16px;
+  font-family: var(--sans); font-size: 14px;
+  color: var(--text); outline: none;
+  transition: all 0.2s;
+  font-weight: 300;
 }
-.field input:focus { border-color: var(--green-light); background: var(--white); }
-.field input.error-input { border-color: var(--error); }
+.field input::placeholder { color: rgba(200,240,238,0.2); }
+.field input:focus { border-color: var(--aqua); background: rgba(46,205,196,0.05); }
+.field input.err { border-color: var(--error); }
 
-.error-msg {
-  background: #FFF0F3;
-  color: var(--error);
-  font-size: 12px;
-  padding: 10px 12px;
+.error-box {
+  background: rgba(255,107,107,0.08);
+  border: 1px solid rgba(255,107,107,0.2);
   border-radius: 8px;
-  border: 1px solid rgba(255,77,109,0.2);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--error);
   display: none;
+  font-weight: 300;
 }
-.error-msg.show { display: block; }
+.error-box.show { display: block; }
 
 .btn-submit {
-  background: var(--green);
-  color: var(--white);
+  background: var(--aqua);
+  color: var(--deep);
   border: none;
   padding: 14px;
   border-radius: 50px;
   font-family: var(--sans);
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 14px; font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s;
+  letter-spacing: 0.04em;
+  box-shadow: 0 0 30px rgba(46,205,196,0.2);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
   margin-top: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
 }
-.btn-submit:hover { background: var(--green-mid); transform: translateY(-1px); }
-.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.btn-submit:hover { background: var(--foam); box-shadow: 0 0 50px rgba(46,205,196,0.35); transform: translateY(-1px); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-.divider {
+.divider-or {
   display: flex; align-items: center; gap: 12px;
-  font-size: 12px; color: var(--text-2); margin: 4px 0;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2);
 }
-.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #E5E7EB; }
+.divider-or::before, .divider-or::after {
+  content: ''; flex: 1; height: 1px;
+  background: rgba(46,205,196,0.1);
+}
 
 .btn-google {
-  background: var(--white);
+  background: transparent;
+  border: 1px solid rgba(46,205,196,0.2);
   color: var(--text);
-  border: 1.5px solid #E5E7EB;
   padding: 13px;
   border-radius: 50px;
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 600;
+  font-family: var(--sans); font-size: 13px; font-weight: 400;
   cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
+  transition: all 0.25s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; letter-spacing: 0.03em;
 }
-.btn-google:hover { border-color: var(--green-light); background: var(--green-glow); }
-
-.google-icon {
-  width: 18px; height: 18px;
+.btn-google:hover { border-color: var(--aqua); background: rgba(46,205,196,0.05); }
+.g-icon {
+  width: 18px; height: 18px; flex-shrink: 0;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23FFC107' d='M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.7 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z'/%3E%3Cpath fill='%23FF3D00' d='m6.3 14.7 6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.7 29.3 4 24 4c-7.7 0-14.3 4.4-17.7 10.7z'/%3E%3Cpath fill='%234CAF50' d='M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.4 26.7 36 24 36c-5.2 0-9.7-3.3-11.3-8H6.1C9.5 39.4 16.2 44 24 44z'/%3E%3Cpath fill='%231976D2' d='M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4 5.6l6.2 5.2C37 38.4 44 33 44 24c0-1.3-.1-2.6-.4-3.9z'/%3E%3C/svg%3E") center/contain no-repeat;
 }
 
-.footer-text { font-size: 11px; color: var(--text-2); text-align: center; margin-top: 16px; line-height: 1.5; }
-.footer-text a { color: var(--green); text-decoration: none; font-weight: 500; }
+.spinner { width:15px; height:15px; border:2px solid rgba(5,14,26,0.3); border-top-color:var(--deep); border-radius:50%; animation:spin 0.7s linear infinite; display:none; }
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* Loading spinner */
-.spinner {
-  width: 16px; height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  display: none;
+.form-footer { font-size: 11px; color: var(--text-2); text-align: center; margin-top: 20px; line-height: 1.6; font-weight: 300; }
+.form-footer a { color: rgba(46,205,196,0.7); text-decoration: none; }
+.form-footer a:hover { color: var(--aqua); }
+
+@media (max-width: 768px) {
+  .left { display: none; }
+  .right { width: 100%; padding: 40px 28px; }
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.panel { display: none; }
-.panel.active { display: flex; flex-direction: column; gap: 12px; }
 </style>
 </head>
 <body>
-<div class="card">
-  <div class="logo">💰 Meu Plano</div>
-  <div class="tagline">Organize suas finanças. Saia das dívidas de vez.</div>
+<canvas id="c"></canvas>
+
+<!-- LEFT -->
+<div class="left">
+  <div class="orb"></div>
+  <div class="left-logo">I<em>ara</em></div>
+  <div class="left-tagline">Controle o fluxo do seu dinheiro</div>
+  <div class="left-myth">
+    <p>"Iara era a senhora das águas — quem seguia seu chamado encontrava clareza onde antes havia confusão."</p>
+    <span>Mitologia Tupi-Guarani</span>
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+  <div class="form-title">Bem-vindo</div>
+  <div class="form-subtitle">Entre na sua conta ou crie uma nova gratuitamente</div>
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('login')">Entrar</button>
     <button class="tab-btn" onclick="switchTab('signup')">Criar conta</button>
   </div>
 
-  <div class="error-msg" id="error-msg"></div>
+  <div class="error-box" id="err"></div>
 
-  <!-- LOGIN PANEL -->
+  <!-- LOGIN -->
   <div class="panel active" id="panel-login">
-    <div class="form">
-      <div class="field">
-        <label>E-mail</label>
-        <input type="email" id="login-email" placeholder="seu@email.com">
-      </div>
-      <div class="field">
-        <label>Senha</label>
-        <input type="password" id="login-password" placeholder="••••••••">
-      </div>
-      <button class="btn-submit" id="btn-login" onclick="handleLogin()">
-        <span>Entrar</span>
-        <div class="spinner" id="spinner-login"></div>
-      </button>
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="seu@email.com">
     </div>
-    <div class="divider">ou</div>
-    <button class="btn-google" onclick="handleGoogle()">
-      <div class="google-icon"></div>
-      Entrar com Google
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="login-password" placeholder="••••••••">
+    </div>
+    <button class="btn-submit" id="btn-login" onclick="handleLogin()">
+      <span>Entrar em Iara</span>
+      <div class="spinner" id="sp-login"></div>
     </button>
-  </div>
-
-  <!-- SIGNUP PANEL -->
-  <div class="panel" id="panel-signup">
-    <div class="form">
-      <div class="field">
-        <label>E-mail</label>
-        <input type="email" id="signup-email" placeholder="seu@email.com">
-      </div>
-      <div class="field">
-        <label>Senha</label>
-        <input type="password" id="signup-password" placeholder="Mínimo 6 caracteres">
-      </div>
-      <div class="field">
-        <label>Confirmar senha</label>
-        <input type="password" id="signup-confirm" placeholder="Repita a senha">
-      </div>
-      <button class="btn-submit" id="btn-signup" onclick="handleSignup()">
-        <span>Criar conta grátis</span>
-        <div class="spinner" id="spinner-signup"></div>
-      </button>
-    </div>
-    <div class="divider">ou</div>
+    <div class="divider-or">ou</div>
     <button class="btn-google" onclick="handleGoogle()">
-      <div class="google-icon"></div>
+      <div class="g-icon"></div>
       Continuar com Google
     </button>
   </div>
 
-  <div class="footer-text">
-    Ao entrar, você concorda com nossos <a href="#">Termos de uso</a> e <a href="#">Política de privacidade</a>
+  <!-- SIGNUP -->
+  <div class="panel" id="panel-signup">
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="signup-email" placeholder="seu@email.com">
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="signup-password" placeholder="Mínimo 6 caracteres">
+    </div>
+    <div class="field">
+      <label>Confirmar senha</label>
+      <input type="password" id="signup-confirm" placeholder="Repita a senha">
+    </div>
+    <button class="btn-submit" id="btn-signup" onclick="handleSignup()">
+      <span>Criar minha conta</span>
+      <div class="spinner" id="sp-signup"></div>
+    </button>
+    <div class="divider-or">ou</div>
+    <button class="btn-google" onclick="handleGoogle()">
+      <div class="g-icon"></div>
+      Continuar com Google
+    </button>
+  </div>
+
+  <div class="form-footer">
+    Ao entrar, você concorda com nossa <a href="#">política de privacidade</a>.<br>
+    Seus dados nunca são vendidos.
   </div>
 </div>
 
-<script type="module">
-  import { loginWithGoogle, loginWithEmail, signupWithEmail, watchAuthState } from '../js/firebase.js';
-
-  // Redirect if already logged in
-  watchAuthState(
-    (user) => { window.location.href = 'app.html'; },
-    () => {}
-  );
-
-  function showError(msg) {
-    const el = document.getElementById('error-msg');
-    el.textContent = msg;
-    el.classList.add('show');
-  }
-  function hideError() {
-    document.getElementById('error-msg').classList.remove('show');
-  }
-  function setLoading(btnId, spinnerId, loading) {
-    const btn = document.getElementById(btnId);
-    const spinner = document.getElementById(spinnerId);
-    btn.disabled = loading;
-    spinner.style.display = loading ? 'block' : 'none';
-  }
-
-  window.switchTab = function(tab) {
-    hideError();
-    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (i === 0) === (tab === 'login')));
-    document.getElementById('panel-login').classList.toggle('active', tab === 'login');
-    document.getElementById('panel-signup').classList.toggle('active', tab === 'signup');
-  };
-
-  window.handleGoogle = async function() {
-    hideError();
-    const { user, error } = await loginWithGoogle();
-    if (error) showError(error);
-    else window.location.href = 'app.html';
-  };
-
-  window.handleLogin = async function() {
-    hideError();
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    if (!email || !password) return showError('Preencha e-mail e senha.');
-    setLoading('btn-login', 'spinner-login', true);
-    const { user, error } = await loginWithEmail(email, password);
-    setLoading('btn-login', 'spinner-login', false);
-    if (error) showError(error);
-    else window.location.href = 'app.html';
-  };
-
-  window.handleSignup = async function() {
-    hideError();
-    const email = document.getElementById('signup-email').value.trim();
-    const password = document.getElementById('signup-password').value;
-    const confirm = document.getElementById('signup-confirm').value;
-    if (!email || !password) return showError('Preencha todos os campos.');
-    if (password !== confirm) return showError('As senhas não coincidem.');
-    if (password.length < 6) return showError('Senha precisa ter pelo menos 6 caracteres.');
-    setLoading('btn-signup', 'spinner-signup', true);
-    const { user, error } = await signupWithEmail(email, password);
-    setLoading('btn-signup', 'spinner-signup', false);
-    if (error) showError(error);
-    else window.location.href = 'app.html';
-  };
-
-  // Enter key support
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      const activePanel = document.querySelector('.panel.active').id;
-      if (activePanel === 'panel-login') window.handleLogin();
-      else window.handleSignup();
+<script>
+// Water waves
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H, t = 0;
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  for (let i = 0; i < 6; i++) {
+    ctx.beginPath();
+    ctx.strokeStyle = `rgba(46,205,196,${0.02 + i * 0.008})`;
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= W; x += 3) {
+      const y = H * 0.5 + Math.sin((x / W * Math.PI * 4) + t + i * 0.9) * (40 + i * 20)
+               + Math.sin((x / W * Math.PI * 7) + t * 0.6 + i * 1.2) * (20 + i * 10);
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     }
-  });
+    ctx.stroke();
+  }
+  t += 0.007;
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+<script type="module">
+import { loginWithGoogle, loginWithEmail, signupWithEmail, watchAuthState } from '../js/firebase.js';
+
+watchAuthState(u => { if(u) window.location.href = 'app.html'; }, () => {});
+
+function showErr(msg) { const e = document.getElementById('err'); e.textContent = msg; e.classList.add('show'); }
+function hideErr() { document.getElementById('err').classList.remove('show'); }
+function setLoad(btn, sp, on) { document.getElementById(btn).disabled = on; document.getElementById(sp).style.display = on ? 'block' : 'none'; }
+
+window.switchTab = tab => {
+  hideErr();
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (i === 0) === (tab === 'login')));
+  document.getElementById('panel-login').classList.toggle('active', tab === 'login');
+  document.getElementById('panel-signup').classList.toggle('active', tab === 'signup');
+};
+
+window.handleGoogle = async () => {
+  hideErr();
+  const { error } = await loginWithGoogle();
+  if (error) showErr(error);
+  else window.location.href = 'app.html';
+};
+
+window.handleLogin = async () => {
+  hideErr();
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  if (!email || !pass) return showErr('Preencha e-mail e senha.');
+  setLoad('btn-login', 'sp-login', true);
+  const { error } = await loginWithEmail(email, pass);
+  setLoad('btn-login', 'sp-login', false);
+  if (error) showErr(error);
+  else window.location.href = 'app.html';
+};
+
+window.handleSignup = async () => {
+  hideErr();
+  const email = document.getElementById('signup-email').value.trim();
+  const pass = document.getElementById('signup-password').value;
+  const conf = document.getElementById('signup-confirm').value;
+  if (!email || !pass) return showErr('Preencha todos os campos.');
+  if (pass !== conf) return showErr('As senhas não coincidem.');
+  if (pass.length < 6) return showErr('Senha precisa ter pelo menos 6 caracteres.');
+  setLoad('btn-signup', 'sp-signup', true);
+  const { error } = await signupWithEmail(email, pass);
+  setLoad('btn-signup', 'sp-signup', false);
+  if (error) showErr(error);
+  else window.location.href = 'app.html';
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const active = document.querySelector('.panel.active').id;
+  active === 'panel-login' ? window.handleLogin() : window.handleSignup();
+});
 </script>
 </body>
 </html>
